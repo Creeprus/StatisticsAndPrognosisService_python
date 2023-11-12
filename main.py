@@ -1,5 +1,7 @@
-import pandas as pd
-import numpy as np
+import Calculations.model as mat_model
+
 if __name__ == "__main__":
-    print(pd.__version__)
-    print(np.__version__)
+  model=mat_model.Model
+  print(mat_model.np.__version__)
+  print(mat_model.pd.__version__)
+
