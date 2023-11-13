@@ -12,8 +12,8 @@ class Model:
         return response_API
 
     def read_csv(self):
-        df = pd.read_csv("vgsales_5_for_machine.csv")
-        df
+        df = pd.read_csv("data_set.csv")
+        print(df)
 
     def init_model(self):
         pass
