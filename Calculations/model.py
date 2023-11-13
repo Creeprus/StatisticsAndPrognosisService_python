@@ -12,6 +12,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import Normalizer
 
+
 class Model:
     def connect_to_api(self):
         response_API = requests.get('https://api.covid19india.org/state_district_wise.json')
@@ -22,17 +23,18 @@ class Model:
         return df
 
     def encode_model(self):
-        df=self.read_csv()
+        df = self.read_csv()
         Oenc = OrdinalEncoder()
-        #Oenc.fit(df[["УРОЖАЙНОСТЬ тыс тонн"]])
+        # Oenc.fit(df[["УРОЖАЙНОСТЬ тыс тонн"]])
         Lenc = LabelEncoder()
         df["ОБЛАСТЬ"] = Lenc.fit_transform(df["ОБЛАСТЬ"])
         df["КУЛЬТУРА"] = Lenc.fit_transform(df["КУЛЬТУРА"])
         return df
+
     def init_model(self):
         df = self.encode_model()
         Y = df["УРОЖАЙНОСТЬ тыс тонн"]
         X = df.drop(columns="УРОЖАЙНОСТЬ тыс тонн")
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=160)
-        model_indexes=[X_train,X_test,Y_train,Y_test]
+        model_indexes = [X_train, X_test, Y_train, Y_test]
         return model_indexes
