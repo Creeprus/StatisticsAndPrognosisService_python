@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import requests
 from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestRegressor
 import json
 from sklearn.model_selection import KFold
 from sklearn import metrics
@@ -35,6 +36,14 @@ class Model:
         df = self.encode_model()
         Y = df["УРОЖАЙНОСТЬ тыс тонн"]
         X = df.drop(columns="УРОЖАЙНОСТЬ тыс тонн")
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=160)
-        model_indexes = [X_train, X_test, Y_train, Y_test]
-        return model_indexes
+        kf = KFold(n_splits=5, shuffle=True, random_state=42)
+        rfr = RandomForestRegressor()
+        for train_index, test_index in kf.split(df):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train_kfold = X.iloc[train_index]
+            X_test_kfold = X.iloc[test_index]
+            Y_train_kfold = Y.iloc[train_index]
+            Y_test_kfold = Y.iloc[test_index]
+            rfr.fit(X_train_kfold, Y_train_kfold)
+            predict_rfr = rfr.predict(X_test_kfold)
+        print("Случайного лес: ", max(predict_rfr), "\n")
