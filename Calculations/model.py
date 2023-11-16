@@ -19,12 +19,15 @@ class Model:
         response_API = requests.get('https://api.covid19india.org/state_district_wise.json')
         return response_API
 
-    def read_csv(self):
+    def read_csv(self, year, plant, area):
         df = pd.read_csv("data_set.csv", encoding="windows-1251")
+        df = df[df["ОБЛАСТЬ"].str.contains(area) == True]
+        df = df[df["ГОД"] == year]
+        #Тут ошибка. Нужно метод с чилом найти
+        df = df[df["КУЛЬТУРА"].str.contains(plant) == True]
         return df
 
-    def encode_model(self):
-        df = self.read_csv()
+    def encode_model(self,df):
         Oenc = OrdinalEncoder()
         # Oenc.fit(df[["УРОЖАЙНОСТЬ тыс тонн"]])
         Lenc = LabelEncoder()
@@ -32,8 +35,7 @@ class Model:
         df["КУЛЬТУРА"] = Lenc.fit_transform(df["КУЛЬТУРА"])
         return df
 
-    def init_model(self):
-        df = self.encode_model()
+    def init_model(self,df):
         Y = df["УРОЖАЙНОСТЬ тыс тонн"]
         X = df.drop(columns="УРОЖАЙНОСТЬ тыс тонн")
         kf = KFold(n_splits=5, shuffle=True, random_state=42)
