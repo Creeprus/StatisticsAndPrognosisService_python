@@ -23,11 +23,10 @@ class Model:
         df = pd.read_csv("data_set.csv", encoding="windows-1251")
         df = df[df["ОБЛАСТЬ"].str.contains(area) == True]
         df = df[df["ГОД"] == year]
-        #Тут ошибка. Нужно метод с чилом найти
         df = df[df["КУЛЬТУРА"].str.contains(plant) == True]
         return df
 
-    def encode_model(self,df):
+    def encode_model(self, df):
         Oenc = OrdinalEncoder()
         # Oenc.fit(df[["УРОЖАЙНОСТЬ тыс тонн"]])
         Lenc = LabelEncoder()
@@ -35,10 +34,16 @@ class Model:
         df["КУЛЬТУРА"] = Lenc.fit_transform(df["КУЛЬТУРА"])
         return df
 
-    def init_model(self,df):
+    def init_model(self, df):
         Y = df["УРОЖАЙНОСТЬ тыс тонн"]
         X = df.drop(columns="УРОЖАЙНОСТЬ тыс тонн")
-        kf = KFold(n_splits=5, shuffle=True, random_state=42)
+        kf = KFold(n_splits=4, shuffle=True, random_state=42)
+        if len(Y) <= 1:
+            print("Нельзя спрогнозировать, имея только одну строку данных")
+            return
+        if kf.n_splits > len(Y):
+            kf = KFold(n_splits=len(Y), shuffle=True, random_state=42)
+        # проверка на количество сплитов
         rfr = RandomForestRegressor()
         for train_index, test_index in kf.split(df):
             print("TRAIN:", train_index, "TEST:", test_index)
