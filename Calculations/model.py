@@ -21,29 +21,31 @@ class Model:
 
     def read_csv(self, year, plant, area):
         df = pd.read_csv("data_set.csv", encoding="windows-1251")
-        df = df[df["ОБЛАСТЬ"].str.contains(area) == True]
-        df = df[df["ГОД"] == year]
-        df = df[df["КУЛЬТУРА"].str.contains(plant) == True]
+
+        df =df.drop(columns="RegionId") if "RegionId" in df.columns else df
+        df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
+        df = df.drop(columns="Id") if "Id" in df.columns else df
+        df = df[df["Region"].str.contains(area) == True]
+        #df = df[df["Year"] == year]
+        df = df[df["Culture"].str.contains(plant) == True]
         return df
 
-    def encode_model(self, df):
-        Oenc = OrdinalEncoder()
-        # Oenc.fit(df[["УРОЖАЙНОСТЬ тыс тонн"]])
+    def encode_model(self,df):
         Lenc = LabelEncoder()
-        df["ОБЛАСТЬ"] = Lenc.fit_transform(df["ОБЛАСТЬ"])
-        df["КУЛЬТУРА"] = Lenc.fit_transform(df["КУЛЬТУРА"])
+        df["Region"] = Lenc.fit_transform(df["Region"])
+        df["Culture"] = Lenc.fit_transform(df["Culture"])
         return df
 
     def init_model(self, df):
-        Y = df["УРОЖАЙНОСТЬ тыс тонн"]
-        X = df.drop(columns="УРОЖАЙНОСТЬ тыс тонн")
+        df=self.encode_model(df)
+        Y = df["ProductivityValue"]
+        X = df.drop(columns="ProductivityValue")
         kf = KFold(n_splits=4, shuffle=True, random_state=42)
         if len(Y) <= 1:
             print("Нельзя спрогнозировать, имея только одну строку данных")
             return
         if kf.n_splits > len(Y):
             kf = KFold(n_splits=len(Y), shuffle=True, random_state=42)
-        # проверка на количество сплитов
         rfr = RandomForestRegressor()
         for train_index, test_index in kf.split(df):
             print("TRAIN:", train_index, "TEST:", test_index)
