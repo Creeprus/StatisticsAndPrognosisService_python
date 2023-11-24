@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-import requests
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
-import json
 from sklearn.model_selection import KFold
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -15,29 +13,25 @@ from sklearn.preprocessing import Normalizer
 
 
 class Model:
-    def connect_to_api(self):
-        response_API = requests.get('https://api.covid19india.org/state_district_wise.json')
-        return response_API
-
     def read_csv(self, year, plant, area):
         df = pd.read_csv("data_set.csv", encoding="windows-1251")
 
-        df =df.drop(columns="RegionId") if "RegionId" in df.columns else df
+        df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
         df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
         df = df.drop(columns="Id") if "Id" in df.columns else df
         df = df[df["Region"].str.contains(area) == True]
-        #df = df[df["Year"] == year]
+        # df = df[df["Year"] == year]
         df = df[df["Culture"].str.contains(plant) == True]
         return df
 
-    def encode_model(self,df):
+    def encode_model(self, df):
         Lenc = LabelEncoder()
         df["Region"] = Lenc.fit_transform(df["Region"])
         df["Culture"] = Lenc.fit_transform(df["Culture"])
         return df
 
     def init_model(self, df):
-        df=self.encode_model(df)
+        df = self.encode_model(df)
         Y = df["ProductivityValue"]
         X = df.drop(columns="ProductivityValue")
         kf = KFold(n_splits=4, shuffle=True, random_state=42)
