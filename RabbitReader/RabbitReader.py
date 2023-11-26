@@ -6,6 +6,7 @@ import requests
 import pika
 import json
 from Calculations.model import Model
+from MailSend.mail import MailSender
 
 
 class APIReader(Model):
@@ -21,7 +22,9 @@ class APIReader(Model):
         area = json.loads(body)[0]['SelectedRegion']
         df = self.read_dataframe(df=df, year=year, plant=plant,
                                  area=area)
-        self.init_model(self.encode_model(df))
+        result = self.init_model(self.encode_model(df))
+        mail = MailSender()
+        mail.send_report(receiver="leva.kornienko@yandex.ru", area=area, plant=plant, year=year, prolific_model=result)
 
     def receive_message(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))

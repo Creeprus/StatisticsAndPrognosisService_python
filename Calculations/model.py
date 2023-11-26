@@ -10,6 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import Normalizer
+from MailSend.mail import MailSender
 
 
 class Model:
@@ -28,6 +29,10 @@ class Model:
         Lenc = LabelEncoder()
         df["Region"] = Lenc.fit_transform(df["Region"])
         df["Culture"] = Lenc.fit_transform(df["Culture"])
+        return df
+
+    def get_costs(self, df, area, plant, year):
+        df = df.loc[df['Region'].isin(area) & df['Culture'].isin(plant) & df['Year'].isin(year)]
         return df
 
     def init_model(self, df):
@@ -49,4 +54,6 @@ class Model:
             Y_test_kfold = Y.iloc[test_index]
             rfr.fit(X_train_kfold, Y_train_kfold)
             predict_rfr = rfr.predict(X_test_kfold)
+
         print("Случайного лес: ", max(predict_rfr), "\n")
+        return max(predict_rfr)
