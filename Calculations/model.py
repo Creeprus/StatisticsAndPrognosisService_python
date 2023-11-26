@@ -13,8 +13,8 @@ from sklearn.preprocessing import Normalizer
 
 
 class Model:
-    def read_csv(self, year, plant, area):
-        df = pd.read_csv("data_set.csv", encoding="windows-1251")
+    def read_dataframe(self, year, plant, area, df):
+        # df = pd.read_csv("data_set.csv", encoding="windows-1251")
 
         df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
         df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
