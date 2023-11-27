@@ -24,15 +24,16 @@ class APIReader(Model):
                                  area=area)
         result = self.init_model(self.encode_model(df))
         mail = MailSender()
+        # sokolov19868@gmail.com
         mail.send_report(receiver="leva.kornienko@yandex.ru", area=area, plant=plant, year=year, prolific_model=result)
 
     def receive_message(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         channel = connection.channel()
 
-        channel.queue_declare(queue='ClassicTask', durable=True)
+        channel.queue_declare(queue='ClassicReport', durable=True)
 
-        channel.basic_consume(queue='ClassicTask', on_message_callback=self.convert_to_JSON, auto_ack=True)
+        channel.basic_consume(queue='ClassicReport', on_message_callback=self.convert_to_JSON, auto_ack=True)
 
         print(' [*] Waiting for messages. To exit press CTRL+C')
         channel.start_consuming()

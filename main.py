@@ -1,4 +1,3 @@
-import Calculations.model as mat_model
 from Calculations.model import Model
 from RabbitReader.rabbit_reader import APIReader
 import threading
