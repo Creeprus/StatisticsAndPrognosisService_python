@@ -1,18 +1,18 @@
 import email, smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
+from Prognosis.prognose_income import Prognose
 
 class MailSender:
     def __int__(self):
         pass
 
-    def send_report(self, receiver, year, area, plant, prolific_model, plant_cost_self=1000, plant_cost_grow=100):
+    def send_report(self, receiver, year, area, plant, prolific_model, plant_cost_self=120, plant_cost_grow=58.9):
         message = MIMEMultipart("alternative")
         message["Subject"] = "Отчет по урожайности"
         message["From"] = "smtptester193@gmail.com"
         message["To"] = receiver
-
+        prognosis_income = Prognose()
         html = f"""\
         <html>
           <body>
@@ -22,20 +22,20 @@ class MailSender:
                 На вход было получено: Культура: {plant}, Регион: {area}, Год: {year}
                </h1>
                 <h1>
-                Выходные данные: Урожайность картофеля в регионе в {year} потенциально будет составлять {prolific_model} центнеров на гектар.
+                Выходные данные: Урожайность культуры {plant} в регионе в {year} потенциально будет составлять {prolific_model} центнеров на гектар.
                 </h1>
                  <h1>
-                Учитывая рост себестоимости, себестоимость реализации продукта на гектаре территории будет составлять {plant_cost_self * prolific_model} рублей.
+                Учитывая рост себестоимости, себестоимость реализации продукта на гектаре территории будет составлять {prognosis_income.prognose_self_cost(prolific_model,plant_cost_self)} рублей.
                 </h1>
                 </h1>
                  <h1>
                 Учитывая падения стоимости на центнер, стоимость на центнер будет равна {plant_cost_grow} руб.
                 </h1> 
                  <h1>
-                Финальный заработок с реализации продукции будет {plant_cost_grow * prolific_model} руб.
+                Финальный заработок с реализации продукции будет {prognosis_income.prognose_income()} руб.
                 </h1>
                 <h1>
-                Вывод: Посадка картофеля в регионе принесёт прибыль {(plant_cost_grow * prolific_model) - (plant_cost_self * prolific_model)} руб с гектара.
+                Вывод: Посадка культуры {plant} в регионе принесёт прибыль {prognosis_income.prognose_profit(prolific_model,plant_cost_grow,plant_cost_self)} руб с гектара.
                 </h1>
             </p>
           </body>

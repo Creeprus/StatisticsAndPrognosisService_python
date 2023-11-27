@@ -1,6 +1,6 @@
 import Calculations.model as mat_model
 from Calculations.model import Model
-from RabbitReader.RabbitReader import APIReader
+from RabbitReader.rabbit_reader import APIReader
 import threading
 
 if __name__ == "__main__":
