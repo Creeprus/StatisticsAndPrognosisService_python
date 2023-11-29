@@ -24,6 +24,15 @@ class Model:
         # df = df[df["Year"] == year]
         df = df[df["Culture"].str.contains(plant) == True]
         return df
+    def normalize_dataframe_reverse(self, year, area, df):
+        # df = pd.read_csv("data_set.csv", encoding="windows-1251")
+        # этот метод надо будет чутка передалть, как только с апишки начну читать
+        df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
+        df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
+        df = df.drop(columns="Id") if "Id" in df.columns else df
+        df = df[df["Region"].str.contains(area) == True]
+        # df = df[df["Year"] == year]
+        return df
 
     def encode_model(self, df):
         Lenc = LabelEncoder()
@@ -59,4 +68,35 @@ class Model:
         return max(predict_rfr)
 
     def init_reverse_model(self, df):
-        pass
+        df=self.find_best_culture(df)
+        df = self.encode_model(df)
+
+        rfr = RandomForestRegressor()
+        Y = df["Culture"]
+        X = df.drop(columns="Culture")
+        kf = KFold(n_splits=4, shuffle=True, random_state=42)
+        if len(Y) <= 1:
+            print("Нельзя спрогнозировать, имея только одну строку данных")
+            return
+        if kf.n_splits > len(Y):
+            kf = KFold(n_splits=len(Y), shuffle=True, random_state=42)
+        for train_index, test_index in kf.split(df):
+            print("TRAIN:", train_index, "TEST:", test_index)
+            X_train_kfold = X.iloc[train_index]
+            X_test_kfold = X.iloc[test_index]
+            Y_train_kfold = Y.iloc[train_index]
+            Y_test_kfold = Y.iloc[test_index]
+            rfr.fit(X_train_kfold, Y_train_kfold)
+            predict_rfr = rfr.predict(X_test_kfold)
+        print (predict_rfr)
+
+    def find_best_culture(self, df):
+        list = []
+        for i in range(len(df)):
+            first=df.iloc[i, df.columns.get_loc("Price in stock rub")]
+            second=float(df.iloc[i, df.columns.get_loc("ProductivityValue")])
+            third=df.iloc[i, df.columns.get_loc("Prolificy per tonn")]
+            final=first-(second*third)
+            list.append(int(final))
+        df["Profit"]= list
+        return df
