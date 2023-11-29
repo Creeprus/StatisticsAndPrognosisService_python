@@ -24,6 +24,7 @@ class Model:
         # df = df[df["Year"] == year]
         df = df[df["Culture"].str.contains(plant) == True]
         return df
+
     def normalize_dataframe_reverse(self, year, area, df):
         # df = pd.read_csv("data_set.csv", encoding="windows-1251")
         # этот метод надо будет чутка передалть, как только с апишки начну читать
@@ -67,13 +68,11 @@ class Model:
         print("Случайного лес: ", max(predict_rfr), "\n")
         return max(predict_rfr)
 
-    def init_reverse_model(self, df):
-        df=self.find_best_culture(df)
+    def reverse_model_predict(self, df):
         df = self.encode_model(df)
-
         rfr = RandomForestRegressor()
-        Y = df["Culture"]
-        X = df.drop(columns="Culture")
+        Y = df["ProductivityValue"]
+        X = df.drop(columns="ProductivityValue")
         kf = KFold(n_splits=4, shuffle=True, random_state=42)
         if len(Y) <= 1:
             print("Нельзя спрогнозировать, имея только одну строку данных")
@@ -88,15 +87,26 @@ class Model:
             Y_test_kfold = Y.iloc[test_index]
             rfr.fit(X_train_kfold, Y_train_kfold)
             predict_rfr = rfr.predict(X_test_kfold)
-        print (predict_rfr)
+        return max(predict_rfr)
 
-    def find_best_culture(self, df):
+    def init_reverse_model(self, df, amount=2):
+        dict_cultures = {}
+        df = self.calculate_profit(df)
+        for j in range(amount):
+            dfmax = df.loc[df['Profit'].idxmax()]
+            best_plant = dfmax.iloc[2]
+            dfmax = df[df["Culture"].str.contains(best_plant) == True]
+            df = df[df["Culture"].str.contains(best_plant) != True]
+            dict_cultures.update({best_plant: self.reverse_model_predict(dfmax)})
+        return dict_cultures
+
+    def calculate_profit(self, df):
         list = []
         for i in range(len(df)):
-            first=df.iloc[i, df.columns.get_loc("Price in stock rub")]
-            second=float(df.iloc[i, df.columns.get_loc("ProductivityValue")])
-            third=df.iloc[i, df.columns.get_loc("Prolificy per tonn")]
-            final=first-(second*third)
+            first = df.iloc[i, df.columns.get_loc("Price in stock rub")]
+            second = float(df.iloc[i, df.columns.get_loc("ProductivityValue")])
+            third = df.iloc[i, df.columns.get_loc("Prolificy per tonn")]
+            final = first - (second * third)
             list.append(int(final))
-        df["Profit"]= list
+        df["Profit"] = list
         return df
