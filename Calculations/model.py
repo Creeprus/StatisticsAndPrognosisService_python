@@ -14,9 +14,9 @@ from MailSend.mail import MailSender
 
 
 class Model:
-    def read_dataframe(self, year, plant, area, df):
+    def normalize_dataframe(self, year, plant, area, df):
         # df = pd.read_csv("data_set.csv", encoding="windows-1251")
-
+        # этот метод надо будет чутка передалть, как только с апишки начну читать
         df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
         df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
         df = df.drop(columns="Id") if "Id" in df.columns else df
@@ -57,3 +57,6 @@ class Model:
 
         print("Случайного лес: ", max(predict_rfr), "\n")
         return max(predict_rfr)
+
+    def init_reverse_model(self, df):
+        pass

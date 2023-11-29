@@ -1,11 +1,8 @@
 from Calculations.model import Model
-from RabbitReader.rabbit_reader import APIReader
+from RabbitReader.rabbit_reader import RabbitReader
 import threading
 
 if __name__ == "__main__":
     md = Model()
     while True:
-        Rabbit_response = APIReader().receive_message()
-        # API_response = RabbitReader().connect_to_api()
-        # if API_response != "":
-        #     md.init_model(md.read_csv(year=2022, area="Астраханская область", plant="Рис"))
+        Rabbit_response = RabbitReader().receive_message()

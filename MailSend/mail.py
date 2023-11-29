@@ -8,7 +8,8 @@ class MailSender:
     def __int__(self):
         pass
 
-    def send_report(self, receiver, year, area, plant, prolific_model, plant_cost_self=170, plant_cost_grow=39100):
+    def send_report_classic(self, receiver, year, area, plant, prolific_model, plant_cost_self=170,
+                            plant_cost_grow=39100):
         message = MIMEMultipart("alternative")
         message["Subject"] = "Отчет по урожайности"
         message["From"] = "smtptester193@gmail.com"
