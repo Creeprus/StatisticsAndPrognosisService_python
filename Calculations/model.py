@@ -42,11 +42,14 @@ class Model:
         return df
 
     def get_stock_price(self, df, area, plant, year):
+        df = df[df["Region"].str.contains(area) == True]
+        df = df[df["Culture"].str.contains(plant) == True]
         stock_price = df.iloc[0, df.columns.get_loc("Stock price")]
-
         return stock_price
 
     def get_planting_price(self, df, area, plant, year):
+        df = df[df["Region"].str.contains(area) == True]
+        df = df[df["Culture"].str.contains(plant) == True]
         planting_price = df.iloc[0, df.columns.get_loc("Planting price")]
         return planting_price
 

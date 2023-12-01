@@ -57,8 +57,8 @@ class MailSender:
         message["From"] = "smtptester193@gmail.com"
         message["To"] = receiver
         prognosis_income_reverse = Prognose_Reverse()
-        list_keys = [prognosis_income_reverse.return_cultures(best_plants)]
-        list_values = [prognosis_income_reverse.return_prolificies(best_plants)]
+        list_keys = prognosis_income_reverse.return_cultures(best_plants)
+        list_values = prognosis_income_reverse.return_prolificies(best_plants)
         html = f"""\
         <html>
           <body>
@@ -74,29 +74,27 @@ class MailSender:
                 Урожайность культуры {list_keys[0]} в регионе {area} в {year} году  потенциально будет составлять {round(list_values[0], 2)} центнеров на гектар.
                 </p>
                  <p>
-                Учитывая рост себестоимости культуры {list_keys[0]}, себестоимость реализации продукта на гектаре территории 
-                будет составлять {prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} planting price")} рублей.
+                Учитывая рост себестоимости культуры {list_keys[0]}, себестоимость реализации продукта на гектаре территории будет составлять {prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} planting price")} рублей.
                 </p>
                     <p>
                Урожайность культуры {list_keys[1]} в регионе {area} в {year} году  потенциально будет составлять {round(list_values[1], 2)} центнеров на гектар.
                 </p>
                  <p>
-                Учитывая рост себестоимости культуры {list_keys[1]}, себестоимость реализации продукта на гектаре территории 
-                будет составлять {prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[1]} planting price")} рублей.
+                Учитывая рост себестоимости культуры {list_keys[1]}, себестоимость реализации продукта на гектаре территории будет составлять {prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[1]} planting price")} рублей.
                 </p>
                 </p>
                  <p>
                 {prognosis_income_reverse.prognose_profit(list_values[0], prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} planting price"),
-                                                          stock_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} stock price"), plant=list_keys[0])} .
+                                                          stock_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} stock price"), plant=list_keys[0])}
                 </p>
                 <p>
                 {prognosis_income_reverse.check_profit(list_keys[0], list_values[0], desired_profit,
                                                        planting_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} planting price"),
                                                        stock_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[0]} stock price"))}
                 </p>
-                    <p>
+                <p>
                {prognosis_income_reverse.prognose_profit(list_values[1], prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[1]} planting price"),
-                                                         stock_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[1]} stock price"), plant=list_keys[1])} .
+                                                         stock_price=prognosis_income_reverse.return_prices(stock_planting_price, f"{list_keys[1]} stock price"), plant=list_keys[1])} 
                 </p>
                 <p>
                 {prognosis_income_reverse.check_profit(list_keys[1], list_values[1], desired_profit,

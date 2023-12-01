@@ -25,24 +25,23 @@ class RabbitReader(Model):
         df = self.normalize_dataframe(df=df, year=year, plant=plant,
                                       area=area)
         # этот метод сверху надо будет чутка переделать, как только с апишки начну читать
+        stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
+        planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
         result = self.init_model(df)
         mail = MailSender()
         # sokolov19868@gmail.com
-        stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
-        planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
         mail.send_report_classic(receiver="leva.kornienko@yandex.ru", area=area, plant=plant, year=year,
                                  prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
 
-    def receive_message_classic(self):
+    def receive_message(self):
         connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        # дело в Blocking connection
         channel = connection.channel()
 
         channel.queue_declare(queue='ClassicReport', durable=True)
-
         channel.basic_consume(queue='ClassicReport', on_message_callback=self.classic_report, auto_ack=True)
-
-        print(' [*] Waiting for classic report queue')
+        channel.queue_declare(queue='ReverseReport', durable=True)
+        channel.basic_consume(queue='ReverseReport', on_message_callback=self.reverse_report, auto_ack=True)
+        print(' [*] Waiting for report queue')
         channel.start_consuming()
 
     def reverse_report(self, cg, method, properties, body):
@@ -61,19 +60,7 @@ class RabbitReader(Model):
         for key, value in result_plants.items():
             stock_price = self.get_stock_price(df, area, key, year)
             planting_price = self.get_planting_price(df, area, key, year)
-            plant_stock_price.update({f"{key} stock price": stock_price,
-                                      f"{key} planting price": planting_price})
+            plant_stock_price.update({f"{key} stock price": stock_price})
+            plant_stock_price.update({f"{key} planting price": planting_price})
         mail.send_report_reverse(receiver="leva.kornienko@yandex.ru", area=area, best_plants=result_plants, year=year,
                                  desired_profit=desired_profit, stock_planting_price=plant_stock_price)
-
-    def receive_message_reverse(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        # дело в Blocking connection
-        channel = connection.channel()
-
-        channel.queue_declare(queue='ReverseReport', durable=True)
-
-        channel.basic_consume(queue='ReverseReport', on_message_callback=self.reverse_report, auto_ack=True)
-
-        print(' [*] Waiting for reverse report queue')
-        channel.start_consuming()
