@@ -41,11 +41,14 @@ class Model:
         df["Culture"] = Lenc.fit_transform(df["Culture"])
         return df
 
-    def get_costs(self, df, area, plant, year):
-        df = df.loc[df['Region'].isin(area) & df['Culture'].isin(plant) & df['Year'].isin(year)]
+    def get_stock_price(self, df, area, plant, year):
         stock_price = df.iloc[0, df.columns.get_loc("Stock price")]
+
+        return stock_price
+
+    def get_planting_price(self, df, area, plant, year):
         planting_price = df.iloc[0, df.columns.get_loc("Planting price")]
-        return stock_price, planting_price
+        return planting_price
 
     def init_model(self, df):
         df = self.encode_model(df)

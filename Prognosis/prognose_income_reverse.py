@@ -9,6 +9,11 @@ class Prognose_Reverse(Prognose):
         for key in dict_cultures.items():
             return key
 
+    def return_prices(self, dict_prices, plant):
+        for key, value in dict_prices.items():
+            if key == plant:
+                return value
+
     def return_prolificies(self, dict_cultures):
         for value in dict_cultures.items():
             return value
@@ -18,6 +23,6 @@ class Prognose_Reverse(Prognose):
         if profit <= 0:
             return f"Посадка культуры {culture} в регионе принесёт убытки: {round(prolificy * stock_price - planting_price, 2) * -1} "
         if desired_profit >= profit:
-            return f"Посадка культуры {culture} в регионе принесёт прибыль {self.prognosis_income_reverse.prognose_profit(prolificy, stock_price, planting_price)} руб с гектара."
+            return f"Посадка культуры {culture} в регионе принесёт прибыль {self.prognose_profit(prolificy, stock_price, planting_price)} руб с гектара."
         else:
-            return f"К сожалению, максимальную ожидаюмую прибыль с посадки культуры {culture} в регионе принесёт прибыль {self.prognosis_income_reverse.prognose_profit(prolificy, stock_price, planting_price)} руб с гектара, что меньше вашей ожидаемой прибыли"
+            return f"К сожалению, максимальную ожидаюмую прибыль с посадки культуры {culture} в регионе принесёт прибыль {self.prognose_profit(prolificy, stock_price, planting_price, plant=culture)} руб с гектара, что меньше вашей ожидаемой прибыли"
