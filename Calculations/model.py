@@ -43,7 +43,9 @@ class Model:
 
     def get_costs(self, df, area, plant, year):
         df = df.loc[df['Region'].isin(area) & df['Culture'].isin(plant) & df['Year'].isin(year)]
-        return df
+        stock_price = df.iloc[0, df.columns.get_loc("Stock price")]
+        planting_price = df.iloc[0, df.columns.get_loc("Planting price")]
+        return stock_price, planting_price
 
     def init_model(self, df):
         df = self.encode_model(df)
@@ -103,9 +105,9 @@ class Model:
     def calculate_profit(self, df):
         list = []
         for i in range(len(df)):
-            first = df.iloc[i, df.columns.get_loc("Price in stock rub")]
+            first = df.iloc[i, df.columns.get_loc("Stock price")]
             second = float(df.iloc[i, df.columns.get_loc("ProductivityValue")])
-            third = df.iloc[i, df.columns.get_loc("Prolificy per tonn")]
+            third = df.iloc[i, df.columns.get_loc("Planting price")]
             final = first - (second * third)
             list.append(int(final))
         df["Profit"] = list
