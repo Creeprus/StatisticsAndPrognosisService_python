@@ -10,6 +10,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import Normalizer
+import strings
 from MailSend.mail import MailSender
 
 
@@ -20,9 +21,9 @@ class Model:
         df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
         df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
         df = df.drop(columns="Id") if "Id" in df.columns else df
-        df = df[df["Region"].str.contains(area) == True]
-        # df = df[df["Year"] == year]
-        df = df[df["Culture"].str.contains(plant) == True]
+        df = df[df[strings.region].str.contains(area) == True]
+        # df = df[df[strings.year] == year]
+        df = df[df[strings.culture].str.contains(plant) == True]
         return df
 
     def normalize_dataframe_reverse(self, year, area, df):
@@ -31,32 +32,32 @@ class Model:
         df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
         df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
         df = df.drop(columns="Id") if "Id" in df.columns else df
-        df = df[df["Region"].str.contains(area) == True]
-        # df = df[df["Year"] == year]
+        df = df[df[strings.region].str.contains(area) == True]
+        # df = df[df[strings.year] == year]
         return df
 
     def encode_model(self, df):
         Lenc = LabelEncoder()
-        df["Region"] = Lenc.fit_transform(df["Region"])
-        df["Culture"] = Lenc.fit_transform(df["Culture"])
+        df[strings.region] = Lenc.fit_transform(df[strings.region])
+        df[strings.culture] = Lenc.fit_transform(df[strings.culture])
         return df
 
     def get_stock_price(self, df, area, plant, year):
-        df = df[df["Region"].str.contains(area) == True]
-        df = df[df["Culture"].str.contains(plant) == True]
-        stock_price = df.iloc[0, df.columns.get_loc("Stock price")]
+        df = df[df[strings.region].str.contains(area) == True]
+        df = df[df[strings.culture].str.contains(plant) == True]
+        stock_price = df.iloc[0, df.columns.get_loc(strings.stock_price)]
         return stock_price
 
     def get_planting_price(self, df, area, plant, year):
-        df = df[df["Region"].str.contains(area) == True]
-        df = df[df["Culture"].str.contains(plant) == True]
-        planting_price = df.iloc[0, df.columns.get_loc("Planting price")]
+        df = df[df[strings.region].str.contains(area) == True]
+        df = df[df[strings.culture].str.contains(plant) == True]
+        planting_price = df.iloc[0, df.columns.get_loc(strings.planting_price)]
         return planting_price
 
     def init_model(self, df):
         df = self.encode_model(df)
-        Y = df["ProductivityValue"]
-        X = df.drop(columns="ProductivityValue")
+        Y = df[strings.prolificy_value]
+        X = df.drop(columns=strings.prolificy_value)
         kf = KFold(n_splits=4, shuffle=True, random_state=42)
         if len(Y) <= 1:
             print("Нельзя спрогнозировать, имея только одну строку данных")
@@ -73,14 +74,14 @@ class Model:
             rfr.fit(X_train_kfold, Y_train_kfold)
             predict_rfr = rfr.predict(X_test_kfold)
 
-        print("Случайного лес: ", max(predict_rfr), "\n")
+        print("Случайный лес: ", predict_rfr, "\n")
         return max(predict_rfr)
 
     def reverse_model_predict(self, df):
         df = self.encode_model(df)
         rfr = RandomForestRegressor()
-        Y = df["ProductivityValue"]
-        X = df.drop(columns="ProductivityValue")
+        Y = df[strings.prolificy_value]
+        X = df.drop(columns=strings.prolificy_value)
         kf = KFold(n_splits=4, shuffle=True, random_state=42)
         if len(Y) <= 1:
             print("Нельзя спрогнозировать, имея только одну строку данных")
@@ -95,6 +96,7 @@ class Model:
             Y_test_kfold = Y.iloc[test_index]
             rfr.fit(X_train_kfold, Y_train_kfold)
             predict_rfr = rfr.predict(X_test_kfold)
+        print("Случайный лес: ", predict_rfr, "\n")
         return max(predict_rfr)
 
     def init_reverse_model(self, df, amount=2):
@@ -103,18 +105,18 @@ class Model:
         for j in range(amount):
             dfmax = df.loc[df['Profit'].idxmax()]
             best_plant = dfmax.iloc[2]
-            dfmax = df[df["Culture"].str.contains(best_plant) == True]
-            df = df[df["Culture"].str.contains(best_plant) != True]
+            dfmax = df[df[strings.culture].str.contains(best_plant) == True]
+            df = df[df[strings.culture].str.contains(best_plant) != True]
             dict_cultures.update({best_plant: self.reverse_model_predict(dfmax)})
         return dict_cultures
 
     def calculate_profit(self, df):
         list = []
         for i in range(len(df)):
-            first = df.iloc[i, df.columns.get_loc("Stock price")]
-            second = float(df.iloc[i, df.columns.get_loc("ProductivityValue")])
-            third = df.iloc[i, df.columns.get_loc("Planting price")]
-            final = first - (second * third)
+            stock_price = df.iloc[i, df.columns.get_loc(strings.stock_price)]
+            prolificy = float(df.iloc[i, df.columns.get_loc(strings.prolificy_value)])
+            planting_price = df.iloc[i, df.columns.get_loc(strings.planting_price)]
+            final = (prolificy * stock_price) - planting_price
             list.append(int(final))
         df["Profit"] = list
         return df
