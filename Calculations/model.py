@@ -12,6 +12,7 @@ from sklearn.preprocessing import OrdinalEncoder
 from sklearn.preprocessing import Normalizer
 import strings
 from MailSend.mail import MailSender
+from API.api_reader import API_Reader
 
 
 class Model:
@@ -20,14 +21,13 @@ class Model:
         df = df.drop(columns="regionId") if "regionId" in df.columns else df
         df = df.drop(columns="cultureId") if "cultureId" in df.columns else df
         df = df.drop(columns="id") if "id" in df.columns else df
-        df[strings.stock_price] = stock_price
-        df[strings.planting_price] = planting_price
         return df
 
     def normalize_dataframe_reverse(self, year, area, df):
         # df = pd.read_csv("data_set.csv", encoding="windows-1251")
         df = df.drop(columns="regionId") if "regionId" in df.columns else df
         df = df.drop(columns="id") if "id" in df.columns else df
+        df = df.drop(columns="cultureId") if "cultureId" in df.columns else df
         df = df[df[strings.region].str.contains(area) == True]
         return df
 
@@ -96,10 +96,11 @@ class Model:
 
     def init_reverse_model(self, df, amount=2):
         dict_cultures = {}
+        api = API_Reader()
         df = self.calculate_profit(df)
         for j in range(amount):
             dfmax = df.loc[df['Profit'].idxmax()]
-            best_plant = dfmax.iloc[2]
+            best_plant = dfmax.iloc[1]
             dfmax = df[df[strings.culture].str.contains(best_plant) == True]
             df = df[df[strings.culture].str.contains(best_plant) != True]
             dict_cultures.update({best_plant: self.reverse_model_predict(dfmax)})

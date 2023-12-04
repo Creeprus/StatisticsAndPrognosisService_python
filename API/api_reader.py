@@ -54,3 +54,15 @@ class API_Reader:
         except ValueError:
             return ""
         return result["name"]
+
+    def get_plant(self, plantid):
+        try:
+            url = f'https://localhost:7158/Culture/{plantid}'
+            response_API = requests.get(url, verify=False)
+            result = jsonpickle.decode(response_API.content)
+        # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
+        except ConnectionError:
+            return ""
+        except ValueError:
+            return ""
+        return result["name"]
