@@ -15,25 +15,20 @@ from MailSend.mail import MailSender
 
 
 class Model:
-    def normalize_dataframe(self, year, plant, area, df):
+    def normalize_dataframe(self, df, stock_price, planting_price):
         # df = pd.read_csv("data_set.csv", encoding="windows-1251")
-        # этот метод надо будет чутка передалть, как только с апишки начну читать
-        df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
-        df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
-        df = df.drop(columns="Id") if "Id" in df.columns else df
-        df = df[df[strings.region].str.contains(area) == True]
-        # df = df[df[strings.year] == year]
-        df = df[df[strings.culture].str.contains(plant) == True]
+        df = df.drop(columns="regionId") if "regionId" in df.columns else df
+        df = df.drop(columns="cultureId") if "cultureId" in df.columns else df
+        df = df.drop(columns="id") if "id" in df.columns else df
+        df[strings.stock_price] = stock_price
+        df[strings.planting_price] = planting_price
         return df
 
     def normalize_dataframe_reverse(self, year, area, df):
         # df = pd.read_csv("data_set.csv", encoding="windows-1251")
-        # этот метод надо будет чутка передалть, как только с апишки начну читать
-        df = df.drop(columns="RegionId") if "RegionId" in df.columns else df
-        df = df.drop(columns="CultureId") if "CultureId" in df.columns else df
-        df = df.drop(columns="Id") if "Id" in df.columns else df
+        df = df.drop(columns="regionId") if "regionId" in df.columns else df
+        df = df.drop(columns="id") if "id" in df.columns else df
         df = df[df[strings.region].str.contains(area) == True]
-        # df = df[df[strings.year] == year]
         return df
 
     def encode_model(self, df):

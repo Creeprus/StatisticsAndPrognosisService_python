@@ -17,15 +17,16 @@ class RabbitReader(Model):
     def classic_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
         api = API_Reader()
-        year = json.loads(body)[0][strings.year]
-        plant = json.loads(body)[0][strings.culture]
-        area = json.loads(body)[0][strings.region]
-        email = json.loads(body)[0][strings.email]
-        df = api.connect_to_api()
-        df = self.normalize_dataframe(df=df, year=year, plant=plant, area=area)
-        # этот метод сверху надо будет чутка переделать, как только с апишки начну читать
-        stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
-        planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
+        year = json.loads(body)[strings.year]
+        plant = json.loads(body)[strings.cultureid]
+        area = json.loads(body)[strings.regionid]
+        email = json.loads(body)[strings.email]
+        df = api.connect_to_api_classic(cultureid=plant, regionid=area)
+        planting_price, stock_price, plant = api.get_prices_and_plant(plant)
+        area = api.get_region(area)
+        df = self.normalize_dataframe(df=df, stock_price=stock_price, planting_price=planting_price)
+        # stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
+        # planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
         result = self.init_model(df)
         mail = MailSender(receiver=email)
         # sokolov19868@gmail.com
@@ -47,13 +48,13 @@ class RabbitReader(Model):
     def reverse_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
         api = API_Reader()
-        area = json.loads(body)[0][strings.region]
-        year = json.loads(body)[0][strings.year]
-        desired_profit = json.loads(body)[0][strings.desirable_profit]
-        email = json.loads(body)[0][strings.email]
-        df = api.connect_to_api()
+        area = json.loads(body)[strings.regionid]
+        year = json.loads(body)[strings.year]
+        desired_profit = json.loads(body)[strings.desirable_profit]
+        email = json.loads(body)[strings.email]
+        df = api.connect_to_api_reverse(area)
+        area = api.get_region(area)
         df = self.normalize_dataframe_reverse(df=df, year=year, area=area)
-        # этот метод сверху надо будет чутка переделать, как только с апишки начну читать
         result_plants = self.init_reverse_model(df)
         plant_stock_price = {}
         mail = MailSender(receiver=email)
