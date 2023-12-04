@@ -27,8 +27,11 @@ class RabbitReader(Model):
         df = self.normalize_dataframe(df=df, stock_price=stock_price, planting_price=planting_price)
         # stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
         # planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
-        result = self.init_model(df)
         mail = MailSender(receiver=email)
+        if len(df) <= 1:
+            mail.send_report_fail()
+            return
+        result = self.init_model(df)
         # sokolov19868@gmail.com
         mail.send_report_classic(area=area, plant=plant, year=year,
                                  prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
@@ -55,10 +58,12 @@ class RabbitReader(Model):
         df = api.connect_to_api_reverse(area)
         area = api.get_region(area)
         df = self.normalize_dataframe_reverse(df=df, year=year, area=area)
+        mail = MailSender(receiver=email)
+        if len(df) <= 1:
+            mail.send_report_fail()
+            return
         result_plants = self.init_reverse_model(df)
         plant_stock_price = {}
-        mail = MailSender(receiver=email)
-        # sokolov19868@gmail.com
         for key, value in result_plants.items():
             stock_price = self.get_stock_price(df, area, key, year)
             planting_price = self.get_planting_price(df, area, key, year)
