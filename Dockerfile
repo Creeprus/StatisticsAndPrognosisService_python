@@ -6,4 +6,4 @@ COPY packages.txt .
 RUN pip install --upgrade pip && pip install -r packages.txt
 COPY . .
 # Run the application
-CMD ["python","main,py"]
+CMD ["python","-m","main.py"]
