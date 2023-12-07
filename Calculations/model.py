@@ -1,17 +1,7 @@
-import numpy as np
-import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold
-from sklearn import metrics
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.preprocessing import OrdinalEncoder
-from sklearn.preprocessing import Normalizer
 import strings
-from MailSend.mail import MailSender
 from API.api_reader import API_Reader
 
 

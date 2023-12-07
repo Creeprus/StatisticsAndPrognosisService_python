@@ -1,6 +1,3 @@
-import threading, time
-import pandas as pd
-from pandas import json_normalize
 import pika
 import json
 
@@ -25,14 +22,11 @@ class RabbitReader(Model):
         planting_price, stock_price, plant = api.get_prices_and_plant(plant)
         area = api.get_region(area)
         df = self.normalize_dataframe(df=df, stock_price=stock_price, planting_price=planting_price)
-        # stock_price = self.get_stock_price(df, year=year, plant=plant, area=area)
-        # planting_price = self.get_planting_price(df, year=year, plant=plant, area=area)
         mail = MailSender(receiver=email)
         if len(df) <= 1:
             mail.send_report_fail()
             return
         result = self.init_model(df)
-        # sokolov19868@gmail.com
         mail.send_report_classic(area=area, plant=plant, year=year,
                                  prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
 

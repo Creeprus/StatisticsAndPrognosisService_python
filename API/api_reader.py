@@ -14,9 +14,9 @@ class API_Reader:
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         return pd.DataFrame.from_dict(pd.json_normalize(result["collection"]), orient='columns')
 
     def connect_to_api_reverse(self, regionid):
@@ -26,9 +26,9 @@ class API_Reader:
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         return pd.DataFrame.from_dict(pd.json_normalize(result["collection"]), orient='columns')
 
     def get_prices_and_plant(self, cultureid):
@@ -38,9 +38,9 @@ class API_Reader:
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         return result["costToPlant"], result["priceToSell"], result["name"]
 
     def get_region(self, regionid):
@@ -50,9 +50,9 @@ class API_Reader:
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         return result["name"]
 
     def get_plant(self, plantid):
@@ -62,7 +62,7 @@ class API_Reader:
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
-            return ""
+            return pd.read_csv("data_set.csv", encoding="windows-1251")
         return result["name"]
