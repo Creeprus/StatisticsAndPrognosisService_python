@@ -4,7 +4,6 @@ services:
 
   rabbitmq_server:
     image: 'rabbitmq:3.12-management'
-    hostname: "localhost"
     environment:
       RABBITMQ_USERNAME: "username"
       RABBITMQ_PASSSWORD: "password"
@@ -21,7 +20,7 @@ services:
     environment:
       RABBITMQ_USERNAME: "username"
       RABBITMQ_PASSSWORD: "password"
-      RABBITMQ_HOST: localhost
+      RABBITMQ_HOST: rabbitmq_server
       RABBITMQ_EXCHANGE: "ReportExchange"
     depends_on:
       - rabbitmq_server
