@@ -31,7 +31,7 @@ class RabbitReader(Model):
                                  prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
 
     def receive_message(self):
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=strings.rabbit_host))
         channel = connection.channel()
         channel.queue_declare(queue=strings.rabbit_classic_queue, durable=True)
         channel.basic_consume(queue=strings.rabbit_classic_queue, on_message_callback=self.classic_report,

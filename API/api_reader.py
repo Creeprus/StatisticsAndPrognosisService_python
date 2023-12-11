@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import jsonpickle
 
+import strings
+
 
 class API_Reader:
     def __int__(self):
@@ -9,7 +11,7 @@ class API_Reader:
 
     def connect_to_api_classic(self, cultureid, regionid):
         try:
-            url = f'https://localhost:7158/Productivity?Filter=CultureId ="{cultureid}" and RegionId ="{regionid}"'
+            url = f'https://{strings.api_server}/Productivity?Filter=CultureId ="{cultureid}" and RegionId ="{regionid}"'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
@@ -21,7 +23,7 @@ class API_Reader:
 
     def connect_to_api_reverse(self, regionid):
         try:
-            url = f'https://localhost:7158/Productivity?Filter=RegionId ="{regionid}"'
+            url = f'https://{strings.api_server}/Productivity?Filter=RegionId ="{regionid}"'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
@@ -33,7 +35,7 @@ class API_Reader:
 
     def get_prices_and_plant(self, cultureid):
         try:
-            url = f'https://localhost:7158/Culture/{cultureid}'
+            url = f'https://{strings.api_server}/Culture/{cultureid}'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
@@ -45,7 +47,7 @@ class API_Reader:
 
     def get_region(self, regionid):
         try:
-            url = f'https://localhost:7158/Region/{regionid}'
+            url = f'https://{strings.api_server}/Region/{regionid}'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
@@ -57,7 +59,7 @@ class API_Reader:
 
     def get_plant(self, plantid):
         try:
-            url = f'https://localhost:7158/Culture/{plantid}'
+            url = f'https://{strings.api_server}/Culture/{plantid}'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
         # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
