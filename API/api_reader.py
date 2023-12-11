@@ -14,7 +14,6 @@ class API_Reader:
             url = f'https://{strings.api_server}/Productivity?Filter=CultureId ="{cultureid}" and RegionId ="{regionid}"'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
-        # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
             return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
@@ -26,7 +25,6 @@ class API_Reader:
             url = f'https://{strings.api_server}/Productivity?Filter=RegionId ="{regionid}"'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
-        # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
             return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
@@ -50,7 +48,6 @@ class API_Reader:
             url = f'https://{strings.api_server}/Region/{regionid}'
             response_API = requests.get(url, verify=False)
             result = jsonpickle.decode(response_API.content)
-        # response_API = pd.read_csv("data_set.csv", encoding="windows-1251")
         except ConnectionError:
             return pd.read_csv("data_set.csv", encoding="windows-1251")
         except ValueError:
