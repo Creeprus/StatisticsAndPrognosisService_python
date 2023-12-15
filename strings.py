@@ -14,7 +14,7 @@ planting_price = "costToPlant"
 prolificy_value = "productivityValue"
 smtp_mail = "smtptester193@gmail.com"
 smtp_pass = "oddn eqnc mrlg kcrs"
-#if not in docker container: localhost, otherwise rabbitmq (container name)
+# if not in docker container: localhost, otherwise rabbitmq (container name)
 rabbit_host = "rabbitmq"
-#if not in docker container: localhost:7158, otherwise web:8080
-api_server = "localhost:7158"
+# if not in docker container: localhost:7158, otherwise localhost:8080
+api_server = "localhost:8080"

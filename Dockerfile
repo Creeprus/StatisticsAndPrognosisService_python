@@ -1,8 +1,6 @@
 FROM python:3.11
-WORKDIR /statistic_service_python
-RUN pip install --upgrade pip
+WORKDIR /statistic_service
 COPY packages.txt .
-RUN pip install --upgrade pip && pip install -r packages.txt
 COPY . .
-# Run the application
-CMD ["python","-m","main.py"]
+RUN pip install --upgrade pip && pip install -r packages.txt
+CMD ["python","-m","main"]
