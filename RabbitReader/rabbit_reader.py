@@ -32,7 +32,8 @@ class RabbitReader(Model):
 
     def receive_message(self):
         credentials = pika.PlainCredentials(strings.rabbit_user, strings.rabbit_pass)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=strings.rabbit_host))
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=strings.rabbit_host, credentials=credentials))
         channel = connection.channel()
         channel.queue_declare(queue=strings.rabbit_classic_queue, durable=True)
         channel.basic_consume(queue=strings.rabbit_classic_queue, on_message_callback=self.classic_report,
