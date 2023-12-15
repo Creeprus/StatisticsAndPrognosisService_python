@@ -17,4 +17,6 @@ smtp_pass = "oddn eqnc mrlg kcrs"
 # if not in docker container: localhost, otherwise rabbitmq (container name)
 rabbit_host = "rabbitmq"
 # if not in docker container: localhost:7158, otherwise localhost:8080
-api_server = "localhost:8080"
+api_server = "rabbitmq:8080"
+rabbit_user = "username"
+rabbit_pass = "password"
