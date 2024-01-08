@@ -26,7 +26,7 @@ class RabbitReader(Model):
         if len(df) <= 1:
             mail.send_report_fail()
             return
-        result = self.init_model(df)
+        result = self.init_model(df, year)
         mail.send_report_classic(area=area, plant=plant, year=year,
                                  prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
 
@@ -58,7 +58,7 @@ class RabbitReader(Model):
         if len(df) <= 1:
             mail.send_report_fail()
             return
-        result_plants = self.init_reverse_model(df)
+        result_plants = self.init_reverse_model(df, year)
         plant_stock_price = {}
         for key, value in result_plants.items():
             stock_price = self.get_stock_price(df, area, key, year)
