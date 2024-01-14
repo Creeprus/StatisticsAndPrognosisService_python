@@ -22,7 +22,7 @@ class MailSender:
         income = prognosis.prognose_income()
         profit = prognosis.prognose_profit()
         body = f'{"plant":"{plant}", "area":{area}, "income":"{income}","profit":"{profit}"}'
-        rabbit.send_message(body=body, exchange=strings.rabbit_exchange, routing_key=strings.rabbit_classic_queue)
+        rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_classic_queue)
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
                             planting_price=39100):
@@ -89,7 +89,7 @@ class MailSender:
             f"{list_keys[1]} income": prognosis_reverse_second.prognose_income(),
             f"{list_keys[1]} profit": prognosis_reverse_second.prognose_income()
         }
-        rabbit.send_message(body=body, exchange=strings.rabbit_exchange, routing_key=strings.rabbit_reverse_queue)
+        rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_reverse_queue)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
                             ):
