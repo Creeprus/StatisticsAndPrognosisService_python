@@ -37,6 +37,7 @@ class RabbitReader(Model):
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=strings.rabbit_host, credentials=credentials))
         channel = connection.channel()
+        channel.queue_declare(queue=strings.rabbit_mail_queue, durable=True)
         channel.queue_declare(queue=strings.rabbit_classic_queue, durable=True)
         channel.basic_consume(queue=strings.rabbit_classic_queue, on_message_callback=self.classic_report,
                               auto_ack=True)

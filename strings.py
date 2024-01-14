@@ -7,6 +7,7 @@ year = 'Year'
 desirable_profit = 'DesiredOutcome'
 rabbit_classic_queue = 'ProductivityQueue'
 rabbit_reverse_queue = 'CultureQueue'
+rabbit_mail_queue = 'MailQueue'
 email = "Email"
 stock_price = "priceToSell"
 planting_price = "costToPlant"
