@@ -4,12 +4,12 @@ from email.mime.multipart import MIMEMultipart
 from Prognosis.prognose_income import Prognose
 from Prognosis.prognose_income_reverse import Prognose_Reverse
 import strings
-from RabbitReader.rabbit_reader import RabbitReader
 
 
 class MailSender:
-    def __init__(self, receiver):
+    def __init__(self, receiver, rabbit):
         self.receiver = receiver
+        self.rabbit = rabbit
 
     def send_metrics(self):
         pass

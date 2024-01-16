@@ -10,7 +10,7 @@ from API.api_reader import API_Reader
 class RabbitReader(Model):
 
     def __init__(self):
-        pass
+        self.channel = self.create_channel()
 
     def classic_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
@@ -23,7 +23,7 @@ class RabbitReader(Model):
         planting_price, stock_price, plant = api.get_prices_and_plant(plant)
         area = api.get_region(area)
         df = self.normalize_dataframe(df=df, stock_price=stock_price, planting_price=planting_price)
-        mail = MailSender(receiver=email)
+        mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:
             mail.send_report_fail()
             return
@@ -66,7 +66,7 @@ class RabbitReader(Model):
         df = api.connect_to_api_reverse(area)
         area = api.get_region(area)
         df = self.normalize_dataframe_reverse(df=df, year=year, area=area)
-        mail = MailSender(receiver=email)
+        mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:
             mail.send_report_fail()
             return
@@ -81,5 +81,3 @@ class RabbitReader(Model):
         #                          desired_profit=desired_profit, stock_planting_price=plant_stock_price)
         mail.send_report_reverse_rabbit(area=area, best_plants=result_plants, year=year,
                                         desired_profit=desired_profit, stock_planting_price=plant_stock_price)
-
-    channel = create_channel()
