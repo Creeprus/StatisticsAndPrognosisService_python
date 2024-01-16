@@ -8,6 +8,7 @@ from API.api_reader import API_Reader
 
 
 class RabbitReader(Model):
+
     def __init__(self):
         pass
 
@@ -47,15 +48,13 @@ class RabbitReader(Model):
         return channel
 
     def receive_message(self):
-        channel = self.create_channel()
         print(' [*] Waiting for report queue')
-        channel.start_consuming()
+        self.channel.start_consuming()
 
     def send_message(self, body, routing_key, exchange):
-        channel = self.create_channel()
-        channel.basic_publish(exchange=exchange,
-                              routing_key=routing_key,
-                              body=body)
+        self.channel.basic_publish(exchange=exchange,
+                                   routing_key=routing_key,
+                                   body=body)
 
     def reverse_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
@@ -82,3 +81,5 @@ class RabbitReader(Model):
         #                          desired_profit=desired_profit, stock_planting_price=plant_stock_price)
         mail.send_report_reverse_rabbit(area=area, best_plants=result_plants, year=year,
                                         desired_profit=desired_profit, stock_planting_price=plant_stock_price)
+
+    channel = create_channel()
