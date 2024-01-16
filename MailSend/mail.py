@@ -4,6 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from Prognosis.prognose_income import Prognose
 from Prognosis.prognose_income_reverse import Prognose_Reverse
 import strings
+import jsonpickle
 
 
 class MailSender:
@@ -20,8 +21,8 @@ class MailSender:
                              plant=plant)
         income = prognosis.prognose_income()
         profit = prognosis.prognose_profit()
-        body = f'{"plant":"{plant}", "area":{area}, "income":"{income}","profit":"{profit}"}'
-        self.rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
+        body = {'plant': plant, 'area': area, 'income': income, 'profit': profit}
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange='', routing_key=strings.rabbit_mail_queue)
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
                             planting_price=39100):
@@ -87,7 +88,7 @@ class MailSender:
             f"{list_keys[1]} income": prognosis_reverse_second.prognose_income(),
             f"{list_keys[1]} profit": prognosis_reverse_second.prognose_income()
         }
-        self.rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange='', routing_key=strings.rabbit_mail_queue)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
                             ):
