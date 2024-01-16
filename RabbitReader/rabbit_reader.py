@@ -11,18 +11,18 @@ class RabbitReader(Model):
 
     def __init__(self):
         self.channel = self.create_channel()
+        self.api = API_Reader()
 
     def classic_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
-        api = API_Reader()
         year = json.loads(body)[strings.year]
         plant = json.loads(body)[strings.cultureid]
         area = json.loads(body)[strings.regionid]
         email = json.loads(body)[strings.email]
-        df = api.connect_to_api_classic(cultureid=plant, regionid=area)
-        planting_price, stock_price, plant = api.get_prices_and_plant(plant)
-        area = api.get_region(area)
-        df = self.normalize_dataframe(df=df, stock_price=stock_price, planting_price=planting_price)
+        df = self.api.connect_to_api_classic(cultureid=plant, regionid=area)
+        planting_price, stock_price, plant = self.api.get_prices_and_plant(plant)
+        area = self.api.get_region(area)
+        df = self.normalize_dataframe(df=df)
         mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:
             mail.send_report_fail()
@@ -58,13 +58,12 @@ class RabbitReader(Model):
 
     def reverse_report(self, cg, method, properties, body):
         print(f" [x] Received {body}")
-        api = API_Reader()
         area = json.loads(body)[strings.regionid]
         year = json.loads(body)[strings.year]
         desired_profit = json.loads(body)[strings.desirable_profit]
         email = json.loads(body)[strings.email]
-        df = api.connect_to_api_reverse(area)
-        area = api.get_region(area)
+        df = self.api.connect_to_api_reverse(area)
+        area = self.api.get_region(area)
         df = self.normalize_dataframe_reverse(df=df, year=year, area=area)
         mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:

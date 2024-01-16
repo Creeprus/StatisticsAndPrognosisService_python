@@ -16,13 +16,12 @@ class MailSender:
 
     def send_report_classic_rabbit(self, year, area, plant, prolificy_model, stock_price=170,
                                    planting_price=39100):
-        rabbit = RabbitReader()
         prognosis = Prognose(prolificy=prolificy_model, planting_price=planting_price, stock_price=stock_price,
                              plant=plant)
         income = prognosis.prognose_income()
         profit = prognosis.prognose_profit()
         body = f'{"plant":"{plant}", "area":{area}, "income":"{income}","profit":"{profit}"}'
-        rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
+        self.rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
                             planting_price=39100):
@@ -65,7 +64,6 @@ class MailSender:
             )
 
     def send_report_reverse_rabbit(self, year, area, desired_profit, best_plants, stock_planting_price):
-        rabbit = RabbitReader()
         prognosis = Prognose()
         prognosis_reverse_first = Prognose_Reverse()
         prognosis_reverse_second = Prognose_Reverse()
@@ -89,7 +87,7 @@ class MailSender:
             f"{list_keys[1]} income": prognosis_reverse_second.prognose_income(),
             f"{list_keys[1]} profit": prognosis_reverse_second.prognose_income()
         }
-        rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
+        self.rabbit.send_message(body=body, exchange='', routing_key=strings.rabbit_mail_queue)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
                             ):
