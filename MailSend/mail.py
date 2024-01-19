@@ -22,7 +22,8 @@ class MailSender:
         income = prognosis.prognose_income()
         profit = prognosis.prognose_profit()
         body = {'plant': plant, 'area': area, 'income': income, 'profit': profit}
-        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange='', routing_key=strings.rabbit_mail_queue)
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                 routing_key=strings.rabbit_mail_queue)
         print(' [*] Message sent: ', body)
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
@@ -56,14 +57,10 @@ class MailSender:
         </html>
         """
         text_to_send = MIMEText(html, "html")
-        message.attach(text_to_send)
-        context = ssl.create_default_context()
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(strings.smtp_mail, strings.smtp_pass)
-            server.sendmail(
-                strings.smtp_mail, self.receiver, message.as_string()
-            )
+        body = {'to': self.receiver, 'subject': "Отчёт по урожайности", 'body': text_to_send}
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                 routing_key=strings.rabbit_mail_queue)
+        print(' [*] Message sent: ', body)
 
     def send_report_reverse_rabbit(self, year, area, desired_profit, best_plants, stock_planting_price):
         prognosis = Prognose()
@@ -89,7 +86,8 @@ class MailSender:
             f"{list_keys[1]} income": prognosis_reverse_second.prognose_income(),
             f"{list_keys[1]} profit": prognosis_reverse_second.prognose_income()
         }
-        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange='', routing_key=strings.rabbit_mail_queue)
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                 routing_key=strings.rabbit_mail_queue)
         print(' [*] Message sent: ', body)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
@@ -147,14 +145,10 @@ class MailSender:
         </html>
         """
         text_to_send = MIMEText(html, "html")
-        message.attach(text_to_send)
-        context = ssl.create_default_context()
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(strings.smtp_mail, strings.smtp_pass)
-            server.sendmail(
-                strings.smtp_mail, self.receiver, message.as_string()
-            )
+        body = {'to': self.receiver, 'subject': "Отчёт по урожайности", 'body': text_to_send}
+        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                 routing_key=strings.rabbit_mail_queue)
+        print(' [*] Message sent: ', body)
 
     def send_report_fail(self):
         message = MIMEMultipart("alternative")

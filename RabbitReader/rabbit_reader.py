@@ -28,10 +28,10 @@ class RabbitReader(Model):
             print("[x] Not enough data. Can't do a prognosis")
             return
         result = self.init_model(df, year)
-        # mail.send_report_classic(area=area, plant=plant, year=year,
-        #                          prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
-        mail.send_report_classic_rabbit(area=area, plant=plant, year=year,
-                                        prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
+        mail.send_report_classic(area=area, plant=plant, year=year,
+                                 prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
+        # mail.send_report_classic_rabbit(area=area, plant=plant, year=year,
+        #                                 prolificy_model=result, stock_price=stock_price, planting_price=planting_price)
 
     def create_channel(self):
         credentials = pika.PlainCredentials(strings.rabbit_user, strings.rabbit_pass)
@@ -39,12 +39,19 @@ class RabbitReader(Model):
             pika.ConnectionParameters(host=strings.rabbit_host, credentials=credentials))
         channel = connection.channel()
         channel.queue_declare(queue=strings.rabbit_mail_queue, durable=True)
+        channel.exchange_declare(exchange=strings.rabbit_exchange_mail)
+        channel.exchange_declare(exchange=strings.rabbit_exchange_statistic)
         channel.queue_declare(queue=strings.rabbit_classic_queue, durable=True)
         channel.basic_consume(queue=strings.rabbit_classic_queue, on_message_callback=self.classic_report,
                               auto_ack=True)
         channel.queue_declare(queue=strings.rabbit_reverse_queue, durable=True)
         channel.basic_consume(queue=strings.rabbit_reverse_queue, on_message_callback=self.reverse_report,
                               auto_ack=True)
+        channel.queue_bind(queue=strings.rabbit_mail_queue, exchange=strings.rabbit_exchange_mail,
+                           routing_key=strings.routing_key_mail)
+        channel.queue_bind(queue=strings.rabbit_mail_statistic, exchange=strings.rabbit_exchange_statistic,
+                           routing_key=strings.routing_key_statistic)
+
         return channel
 
     def receive_message(self):
@@ -76,7 +83,7 @@ class RabbitReader(Model):
             planting_price = self.get_planting_price(df, area, key, year)
             plant_stock_price.update({f"{key} stock price": stock_price})
             plant_stock_price.update({f"{key} planting price": planting_price})
-        # mail.send_report_reverse(area=area, best_plants=result_plants, year=year,
-        #                          desired_profit=desired_profit, stock_planting_price=plant_stock_price)
-        mail.send_report_reverse_rabbit(area=area, best_plants=result_plants, year=year,
-                                        desired_profit=desired_profit, stock_planting_price=plant_stock_price)
+        mail.send_report_reverse(area=area, best_plants=result_plants, year=year,
+                                 desired_profit=desired_profit, stock_planting_price=plant_stock_price)
+        # mail.send_report_reverse_rabbit(area=area, best_plants=result_plants, year=year,
+        #                                 desired_profit=desired_profit, stock_planting_price=plant_stock_price)
