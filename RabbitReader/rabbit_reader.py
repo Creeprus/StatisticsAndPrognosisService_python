@@ -25,7 +25,7 @@ class RabbitReader(Model):
         df = self.normalize_dataframe(df=df)
         mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:
-            # mail.send_report_fail()
+            print("[x] Not enough data. Can't do a prognosis")
             return
         result = self.init_model(df, year)
         # mail.send_report_classic(area=area, plant=plant, year=year,
@@ -67,7 +67,7 @@ class RabbitReader(Model):
         df = self.normalize_dataframe_reverse(df=df, year=year, area=area)
         mail = MailSender(receiver=email, rabbit=self)
         if len(df) <= 1:
-            # mail.send_report_fail()
+            print("[x] Not enough data. Can't do a prognosis")
             return
         result_plants = self.init_reverse_model(df, year)
         plant_stock_price = {}
