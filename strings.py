@@ -17,7 +17,7 @@ smtp_mail = "smtptester193@gmail.com"
 smtp_pass = "oddn eqnc mrlg kcrs"
 # if not in docker container: localhost, otherwise rabbitmq (container name)
 rabbit_host = "rabbitmq"
-# if not in docker container: localhost:7158, otherwise productivity.api:8081
+# if not in docker container: localhost:8081, otherwise productivity.api:8081
 api_server = "productivity.api:8081"
 rabbit_user = "username"
 rabbit_pass = "password"

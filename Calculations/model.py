@@ -15,8 +15,6 @@ class Model:
         df = df.drop(columns="regionId") if "regionId" in df.columns else df
         df = df.drop(columns="cultureId") if "cultureId" in df.columns else df
         df = df.drop(columns="id") if "id" in df.columns else df
-        df = df[df[strings.region].str.contains("Курская область") == True]
-        df = df[df[strings.culture].str.contains("просо") == True]
         return df
 
     def get_current_year(self):

@@ -21,9 +21,9 @@ class MailSender:
                              plant=plant)
         income = prognosis.prognose_income()
         profit = prognosis.prognose_profit()
-        body = {'plant': plant, 'area': area, 'income': income, 'profit': profit}
+        body = {'Plant': plant, 'Area': area, 'Income': income, 'Profit': profit}
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_statistic,
-                                 routing_key=strings.rabbit_mail_statistic)
+                                 routing_key=strings.routing_key_statistic)
         print(' [*] Message sent: ', body)
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
@@ -56,10 +56,9 @@ class MailSender:
           </body>
         </html>
         """
-        text_to_send = MIMEText(html, "html")
-        body = {'to': self.receiver, 'subject': "Отчёт по урожайности", 'body': text_to_send}
+        body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
-                                 routing_key=strings.rabbit_mail_queue)
+                                 routing_key=strings.routing_key_mail)
         print(' [*] Message sent: ', body)
 
     def send_report_reverse_rabbit(self, year, area, desired_profit, best_plants, stock_planting_price):
@@ -87,7 +86,7 @@ class MailSender:
             f"{list_keys[1]} profit": prognosis_reverse_second.prognose_income()
         }
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_statistic,
-                                 routing_key=strings.rabbit_mail_statistic)
+                                 routing_key=strings.routing_key_statistic)
         print(' [*] Message sent: ', body)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
@@ -144,10 +143,9 @@ class MailSender:
           </body>
         </html>
         """
-        text_to_send = MIMEText(html, "html")
-        body = {'to': self.receiver, 'subject': "Отчёт по урожайности", 'body': text_to_send}
+        body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
-                                 routing_key=strings.rabbit_mail_queue)
+                                 routing_key=strings.routing_key_mail)
         print(' [*] Message sent: ', body)
 
     def send_report_fail(self):
