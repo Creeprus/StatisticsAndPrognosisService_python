@@ -6,7 +6,6 @@ import strings
 from API.api_reader import API_Reader
 import requests
 import math
-import pandas as pd
 
 
 class Model:

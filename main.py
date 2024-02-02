@@ -1,4 +1,4 @@
-from RabbitReader.rabbit_reader import RabbitReader
+from RabbitReader.rabbit_reports import RabbitReports
 
 if __name__ == "__main__":
-    Rabbit_response = RabbitReader().receive_message()
+    Rabbit_response = RabbitReports().receive_message()
