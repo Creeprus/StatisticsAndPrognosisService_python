@@ -5,6 +5,7 @@ from Prognosis.prognose_income import Prognose
 from Prognosis.prognose_income_reverse import Prognose_Reverse
 import strings
 import jsonpickle
+import html_to_send
 
 
 class MailSender():
@@ -21,28 +22,9 @@ class MailSender():
         message["To"] = self.receiver
         prognosis_income = Prognose(prolificy=prolificy_model, planting_price=planting_price, stock_price=stock_price,
                                     plant=plant)
-        html = f"""\
-        <html>
-          <body>
-            <p>
-            <br>
-               <p>
-                На вход было получено: Культура: {plant}, Регион: {area}, Год: {year}.
-               </p>
-                <p>
-                Выходные данные: Урожайность культуры {plant} в регионе  в {year} году потенциально 
-                будет составлять {round(prolificy_model, 2)} центнеров на гектар.
-                </p>
-                 <p>
-                Учитывая рост себестоимости, себестоимость реализации продукта на гектаре территории 
-                будет составлять {planting_price} рублей.
-                </p>
-                </p>
-                {prognosis_income.return_prognose()}
-            </p>
-          </body>
-        </html>
-        """
+        html = html_to_send.html_normal.format(culture=plant, region=area, year=year,
+                                               prognosed_productivity=round(prolificy_model, 2),
+                                               prognosis=prognosis_income.return_prognose())
         body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
                                  routing_key=strings.routing_key_mail)
@@ -69,39 +51,15 @@ class MailSender():
             stock_planting_price, f"{list_keys[0]} planting price"), prognosis_reverse_second.return_prices(
             stock_planting_price,
             f"{list_keys[1]} planting price")
-        html = f"""\
-        <html>
-          <body>
-            <p>
-            <br>
-               <p>
-                На вход было получено: Год: {year}, Регион: {area}, Прибыль с гектара: {desired_profit}
-               </p>
-                <p>
-               Учитывая прибыль и урожайность в регионе наиболее оптимальным выбором будет: {list_keys[0]} и {list_keys[1]}
-                </p>                
-                <p>
-                Урожайность культуры {list_keys[0]} в регионе {area} в {year} году  потенциально будет составлять {round(list_values[0], 2)} центнеров на гектар.
-                </p>
-                 <p>
-                Учитывая рост себестоимости культуры {list_keys[0]}, себестоимость реализации продукта на гектаре территории будет составлять {prognosis_reverse_first.planting_price} рублей.
-                </p>
-                <p>
-                Урожайность культуры {list_keys[1]} в регионе {area} в {year} году  потенциально будет составлять {round(list_values[1], 2)} центнеров на гектар.
-                </p>
-                 <p>
-                Учитывая рост себестоимости культуры {list_keys[1]}, себестоимость реализации продукта на гектаре территории будет составлять {prognosis_reverse_second.planting_price} рублей.
-                </p>
-                <p>
-                {prognosis_reverse_first.check_profit(desired_profit=desired_profit)}
-                </p>
-                <p>
-                {prognosis_reverse_second.check_profit(desired_profit=desired_profit)}
-                </p>
-            </p>
-          </body>
-        </html>
-        """
+        html = html_to_send.html_normal.format(region=area, year=year, desired_outcome=desired_profit,
+                                               culture1=list_keys[0], culture2=list_keys[1],
+                                               prognosed_productivity1=round(list_values[0], 2),
+                                               prognosed_productivity2=round(list_values[1], 2),
+                                               prognosis1=prognosis_reverse_first.check_profit(
+                                                   desired_profit=desired_profit),
+                                               prognosis2=prognosis_reverse_second.check_profit(
+                                                   desired_profit=desired_profit)
+                                               )
         body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
         self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
                                  routing_key=strings.routing_key_mail)

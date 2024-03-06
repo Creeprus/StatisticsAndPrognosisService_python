@@ -31,25 +31,19 @@ class Prognose:
     def return_prognose(self):
         if round(self.prognose_profit(), 2) > 0:
             html = f"""\
-                             <p>
+                             
                             Финальный заработок с реализации продукции 
                             будет {self.prognose_income()} руб.
-                            </p>
-                             <p>
                             Стоимость посадки: {self.planting_price} руб.
-                            </p>
-                            <p>
-                            Вывод: Посадка культуры {self.plant} в регионе принесёт 
+                            Посадка культуры {self.plant} в регионе принесёт 
                             прибыль {round(self.prognose_profit(), 2)} руб 
                             с гектара.
-                            </p>
                     """
             return html
         else:
             html = f"""\
-                                        Вывод: Посадка культуры {self.plant} в регионе принесёт 
+                                        Посадка культуры {self.plant} в регионе принесёт 
                                         убыток {round(self.prognose_profit(), 2) * -1} руб 
                                         с гектара.
-                                        </p>
                                 """
             return html
