@@ -5,7 +5,7 @@ from Prognosis.prognose_income import Prognose
 from Prognosis.prognose_income_reverse import Prognose_Reverse
 import strings
 import jsonpickle
-import DataSender.html_to_send
+import html_to_send
 
 
 class MailSender():
