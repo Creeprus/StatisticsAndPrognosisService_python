@@ -51,7 +51,7 @@ class MailSender():
             stock_planting_price, f"{list_keys[0]} planting price"), prognosis_reverse_second.return_prices(
             stock_planting_price,
             f"{list_keys[1]} planting price")
-        html = html_to_send.html_normal.format(region=area, year=year, desired_outcome=desired_profit,
+        html = html_to_send.html_reverse.format(region=area, year=year, desired_outcome=desired_profit,
                                                culture1=list_keys[0], culture2=list_keys[1],
                                                prognosed_productivity1=round(list_values[0], 2),
                                                prognosed_productivity2=round(list_values[1], 2),
