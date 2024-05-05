@@ -9,7 +9,7 @@ import pika
 class RabbitReports(Model):
     def __init__(self):
         super().__init__()
-        self.channel = self.create_channel()
+        self.__channel = self.create_channel()
 
     def create_channel(self):
         credentials = pika.PlainCredentials(strings.rabbit_user, strings.rabbit_pass)
@@ -81,9 +81,9 @@ class RabbitReports(Model):
 
     def receive_message(self):
         print(' [*] Waiting for report queue')
-        self.channel.start_consuming()
+        self.__channel.start_consuming()
 
     def send_message(self, body, routing_key, exchange):
-        self.channel.basic_publish(exchange=exchange,
-                                   routing_key=routing_key,
-                                   body=body)
+        self.__channel.basic_publish(exchange=exchange,
+                                     routing_key=routing_key,
+                                     body=body)

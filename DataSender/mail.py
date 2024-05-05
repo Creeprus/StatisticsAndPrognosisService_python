@@ -12,7 +12,7 @@ class MailSender():
     def __init__(self, receiver, rabbit):
         super().__init__()
         self.receiver = receiver
-        self.rabbit = rabbit
+        self.__rabbit = rabbit
 
     def send_report_classic(self, year, area, plant, prolificy_model, stock_price=170,
                             planting_price=39100):
@@ -26,8 +26,8 @@ class MailSender():
                                                prognosed_productivity=round(prolificy_model, 2),
                                                prognosis=prognosis_income.return_prognose())
         body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
-        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
-                                 routing_key=strings.routing_key_mail)
+        self.__rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                   routing_key=strings.routing_key_mail)
         print(' [*] Message sent: ', body)
 
     def send_report_reverse(self, year, area, desired_profit, best_plants, stock_planting_price
@@ -61,8 +61,8 @@ class MailSender():
                                                    desired_profit=desired_profit)
                                                )
         body = {'To': self.receiver, 'Subject': "Отчёт по урожайности", 'Body': html}
-        self.rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
-                                 routing_key=strings.routing_key_mail)
+        self.__rabbit.send_message(body=jsonpickle.dumps(body), exchange=strings.rabbit_exchange_mail,
+                                   routing_key=strings.routing_key_mail)
         print(' [*] Message sent: ', body)
 
     def send_report_fail(self):
