@@ -2,6 +2,7 @@ from pandas._testing import assert_frame_equal
 
 from API.api_reader import *
 from DataSender import *
+from Model.model import Model
 from RabbitReader import *
 
 
@@ -54,11 +55,20 @@ class Test:
             print("test_2_wrongtype: Failure")
             assert False
 
-    def test_4_model(self):
-        pass
-
-    def test_5_prognosis(self):
-        pass
+    def test_4_model(self, area, plant):
+        try:
+            md = Model()
+            df_test = pd.read_csv("data_set.csv", encoding="windows-1251")
+            df_test = df_test[df_test[strings.region].str.contains(area) == True]
+            df_test = df_test[df_test[strings.culture].str.contains(plant) == True]
+            result = md.init_model(df=df_test, year=2024)
+            if result != None:
+                print("test_4_model: Success")
+            else:
+                assert False
+        except:
+            print("test_4_model: Failure")
+            assert False
 
 
 if __name__ == "__main__":
@@ -66,3 +76,4 @@ if __name__ == "__main__":
     test.test_1_api_classic(plant="08cd5e4b-46b3-4bff-b76a-08dc19157960", area="6516be21-5293-4768-8a77-08dc191579c6")
     test.test_2_api_reverse(area="6516be21-5293-4768-8a77-08dc191579c6")
     test.test_3_wrongtype(plant="08cd5e4b-46b3-4bff-b76a-08dc19157960", area="6516be21-5293-4768-8a77-08dc191579c6")
+    test.test_4_model(area="Республика Татарстан", plant='просо')
